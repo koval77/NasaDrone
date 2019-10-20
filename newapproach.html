@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+			canvas { width: 100%; height: 100% }
+		</style>
+	</head>
+	<body>
+		<script src="three.js"></script>
+        <script src="GLTFLoader.js"></script>
+        <script src="FirstPersonControls.js"></script>
+		<script>
+
+var scene, camera, renderer,controls;
+
+			var mouseX = 0, mouseY = 0;
+			var windowHalfX = window.innerWidth / 2;
+			var windowHalfY = window.innerHeight / 2;
+function init() {
+    scene  = new THREE.Scene();
+    scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
+    camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 1000 );
+ renderer = new THREE.WebGLRenderer();
+    	renderer.setSize(1920,1080);
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+    	window.addEventListener( 'resize', onWindowResize, false );
+
+renderer.setSize( window.innerWidth, window.innerHeight );
+document.body.appendChild( renderer.domElement );
+
+    controls = new THREE.FirstPersonControls(camera);
+  controls.rotateSpeed = 1.0;
+controls.zoomSpeed = 1.2;
+controls.panSpeed = 0.8;
+controls.noZoom = false;
+controls.noPan = false;
+controls.staticMoving = true;
+controls.dynamicDampingFactor = 0.3;
+
+let directionalLight1 = new THREE.DirectionalLight( 0xC0C090 );
+let directionalLight2 = new THREE.DirectionalLight( 0xC0C090 );
+directionalLight1.position.set( - 100, 50, 100 );
+directionalLight2.position.set( 100, 50, - 100 );
+    directionalLight1.intensity=10;
+scene.add( directionalLight1 );
+scene.add( directionalLight2 );
+            camera.position.set(2, 5, 8);
+
+    loadModel();
+    onTick();
+
+}
+
+function loadModel() {
+        // BEGIN Clara.io JSON loader code
+				/*var objectLoader = new THREE.ObjectLoader();
+                var texture = new THREE.TextureLoader().load('Rock_034_Base_Color.png');
+                var material=new THREE.MeshPhongMaterial({map: texture});
+				objectLoader.load( "scene.json", function ( obj ) {
+                    obj.material=material;
+				 	scene.add( obj );
+				} );*/
+    const gltfLoader = new THREE.GLTFLoader();
+  const url = 'ver4.gltf';
+  gltfLoader.load(url, (gltf) => {
+    const root = gltf.scene;
+    scene.add(root);
+  });}
+/*    var objectLoader2 = new THREE.ObjectLoader();
+				objectLoader2.load( "model.json", function ( obj ) {
+				 	scene.add( obj );
+				} );*/
+				// END Clara.io JSON loader code
+ /*var loader = new THREE.GLTFLoader();
+    loader.load(
+	// resource URL
+	'scene.glb',
+	// called when the resource is loaded
+	function ( gltf ) {
+		scene.add( gltf.scene );
+		gltf.animations; // Array<THREE.AnimationClip>
+		gltf.scene; // THREE.Scene
+		gltf.scenes; // Array<THREE.Scene>
+		gltf.cameras; // Array<THREE.Camera>
+		gltf.asset; // Object
+	},
+	// called while loading is progressing
+	function ( xhr ) {
+		console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+	},
+	// called when loading has errors
+	function ( error ) {
+		console.log( 'An error happened' );
+	}
+);*/
+
+
+// instantiate the loader
+
+// Optional: Provide a DRACOLoader instance to decode compressed mesh data
+//var dracoLoader = new THREE.DRACOLoader();
+//dracoLoader.setDecoderPath( '/examples/js/libs/draco' );
+//loader.setDRACOLoader( dracoLoader );
+// Load a glTF resource
+
+function onTick() {
+    requestAnimationFrame(onTick);
+    camera.position.x += ( mouseX - camera.position.x ) * .05;
+				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+    camera.lookAt(0,0,0);
+    renderer.render(scene, camera);
+}
+
+/*// function called on successful load
+function callbackOnLoad ( object3d ) {
+	scene.add( object3d );
+}
+
+// load a resource from provided URL synchronously
+loader.load( 'ver4.obj', callbackOnLoad, null, null, null );
+
+var animate = function () {
+				requestAnimationFrame( animate );
+
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+
+				renderer.render( scene, camera );
+			};
+
+			animate();*/
+			// Our Javascript will go here.
+            		function onWindowResize() {
+				windowHalfX = window.innerWidth / 2;
+				windowHalfY = window.innerHeight / 2;
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+            function onDocumentMouseMove( event ) {
+				mouseX = ( event.clientX - windowHalfX ) / 2;
+				mouseY = ( event.clientY - windowHalfY ) / 2;
+			}
+            function animate()
+{
+    requestAnimationFrame( animate );
+	//onTick()
+	update();
+}
+
+function update()
+{
+	controls.update();
+}
+            init();
+            animate();
+        </script>
+	</body>
+</html>
